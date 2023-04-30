@@ -1,9 +1,14 @@
 # wb-api
 
-## 部署流程
+登陆 /user/login post
+{ email: string, password: string}
 
-- 服务器上安装 MongoDB, bindIp 0.0.0.0
-- 执行 `MONGO_URI="host.docker.internal" yarn initDb` 初始化数据
-- 进入 serverDeploy 文件夹, 执行 initDocker.sh
+注册 /user/signup post
+{
+username: string
+email: string
+password: string
+}
 
-# wb-api
+查询用户信息 /user/info/:id get
+{id: string}
