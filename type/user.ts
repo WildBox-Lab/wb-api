@@ -1,8 +1,8 @@
 export enum genderType {
-  male = 1,
-  female = 2,
-  other = 3,
-  hide = 4,
+  male,
+  female,
+  other,
+  hide,
 }
 
 export type SnsLinkObject = {
