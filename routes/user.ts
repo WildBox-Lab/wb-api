@@ -28,7 +28,7 @@ export type userLoginT = {
   password: string
 }
 
-const otherUserInfoPick = [
+const otherUserInfoKey = [
   'uuid',
   'username',
   'gender',
@@ -38,11 +38,15 @@ const otherUserInfoPick = [
   'birthday',
 ]
 
-const baseSelfInfoPick = [
-  ...otherUserInfoPick,
-  'email',
-  'phoneNumber',
-  'role',
+const baseSelfInfoKey = [...otherUserInfoKey, 'email', 'phoneNumber', 'role']
+
+const canbeUpdateKey = [
+  'username',
+  'gender',
+  'cover',
+  'links',
+  'bio',
+  'birthday',
   'blockList',
 ]
 
@@ -60,7 +64,7 @@ router.post('/login', async (req: CustomRequest<userLoginT>, res) => {
   req.session.userinfo = {
     uuid: result.uuid,
   }
-  res.send(_.pick(result, ...baseSelfInfoPick))
+  res.send(_.pick(result, baseSelfInfoKey))
 })
 
 router.post('/signup', async (req: CustomRequest<baseSignType>, res) => {
@@ -90,7 +94,7 @@ router.post('/signup', async (req: CustomRequest<baseSignType>, res) => {
     tempAuthKey: uuidv4(),
   }
   await userMethod.insertOne(user)
-  res.send(_.pick(user, ...baseSelfInfoPick))
+  res.send(_.pick(user, baseSelfInfoKey))
 })
 
 router.get('/auth-email/:authId', async (req, res) => {
@@ -122,7 +126,7 @@ router.get('/info', async (req, res) => {
     res.end()
     return
   }
-  res.send(_.pick(result, ...baseSelfInfoPick))
+  res.send(_.pick(result, ...baseSelfInfoKey))
 })
 
 router.put(
@@ -141,9 +145,9 @@ router.put(
       res.end()
       return
     }
-    userMethod.updateOne(uuid, req.body)
+    userMethod.updateOne(uuid, _.pick(req.body, canbeUpdateKey))
     const updatedResult = await userMethod.findOne({ uuid })
-    res.send(_.pick(updatedResult, ...baseSelfInfoPick))
+    res.send(_.pick(updatedResult, baseSelfInfoKey))
   }
 )
 
@@ -163,7 +167,7 @@ router.get('/info/:uuid', async (req, res) => {
     res.end()
     return
   }
-  res.send(_.pick(result, ...otherUserInfoPick))
+  res.send(_.pick(result, otherUserInfoKey))
 })
 
 export default router
