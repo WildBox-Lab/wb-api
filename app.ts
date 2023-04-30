@@ -7,6 +7,7 @@ import session from 'express-session'
 import _MemoryStore from 'memorystore'
 import bodyParser from 'body-parser'
 import indexRouter from './routes/index'
+import userRouter from './routes/user'
 
 const MemoryStore = _MemoryStore(session)
 
@@ -39,6 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(session(sess))
 
 app.use('/', indexRouter)
+app.use('/api/user', userRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

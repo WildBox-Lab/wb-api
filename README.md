@@ -3,7 +3,7 @@
 登陆 /user/login post
 { email: string, password: string}
 
-注册 /user/signup post
+注册 post
 {
 username: string
 email: string

@@ -82,9 +82,10 @@ router.post('/signup', async (req: CustomRequest<baseSignType>, res) => {
     birthday: new Date(),
     role: roleType.unauth,
     blockList: [],
+    tempAuthKey: uuidv4(),
   }
   await userMethod.insertOne(user)
-  res.send(_.pick(result, ...baseSelfInfoPick))
+  res.send(_.pick(user, ...baseSelfInfoPick))
 })
 
 router.get('/auth-email/:authId', async (req, res) => {
@@ -101,14 +102,32 @@ router.get('/auth-email/:authId', async (req, res) => {
   res.send('激活成功')
 })
 
+router.get('/info', async (req, res) => {
+  console.log(req.headers.cookie)
+  if (!req.session?.userinfo) {
+    res.status(401)
+    res.end()
+    return
+  }
+  const result = await userMethod.findOne({
+    uuid: req.session?.userinfo.uuid,
+  })
+  if (!result) {
+    res.status(404)
+    res.end()
+    return
+  }
+  res.send(_.pick(result, ...baseSelfInfoPick))
+})
+
 router.get('/info/:uuid', async (req, res) => {
   if (!req.session?.userinfo) {
     res.status(401)
     res.end()
     return
   }
-  const uuid = req.params.uuid || req.session?.userinfo.uuid
-  const isSelf = !req.params.uuid
+  const uuid = req.params.uuid
+
   const result = await userMethod.findOne({
     uuid,
   })
@@ -117,8 +136,7 @@ router.get('/info/:uuid', async (req, res) => {
     res.end()
     return
   }
-  res.send(_.pick(result, ...(isSelf ? baseSelfInfoPick : otherUserInfoPick)))
+  res.send(_.pick(result, ...otherUserInfoPick))
 })
-router.post('/login', async (req: CustomRequest<baseSignType>, res) => {
-  const hashedPassword = `wildbox-${req.body.password}`
-})
+
+export default router
