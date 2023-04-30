@@ -3,7 +3,7 @@ const path = require('path')
 const { MongoClient } = require('mongodb')
 
 // Database Name
-const dbName = 'mvh'
+const dbName = 'wb'
 
 // Connection URL
 const url = `mongodb://127.0.0.1/${dbName}`

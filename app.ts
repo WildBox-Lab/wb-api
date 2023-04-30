@@ -7,12 +7,6 @@ import session from 'express-session'
 import _MemoryStore from 'memorystore'
 import bodyParser from 'body-parser'
 
-import indexRouter from './routes/index'
-import sceneRouter from './routes/scene'
-import adminRouter from './routes/admin'
-import sitemapRouter from './routes/sitemapRouter'
-import eventRouter from './routes/event'
-
 const MemoryStore = _MemoryStore(session)
 
 const app = express()
@@ -21,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json({ type: 'application/*+json' }))
 
 const sess = {
-  secret: 'keyboard cattttttt',
+  secret: 'keyboard catcatcatcat',
   store: new MemoryStore({
     checkPeriod: 86400000, // prune expired entries every 24h
   }),
@@ -43,12 +37,9 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(session(sess))
 
-app.use('/', indexRouter)
-app.use('/api', indexRouter)
-app.use('/api/scene', sceneRouter)
-app.use('/api/admin', adminRouter)
-app.use('/api/_sitemap', sitemapRouter)
-app.use('/api/event', eventRouter)
+app.use('/', (res) => {
+  res.send('OK')
+})
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -13,7 +13,7 @@ echo "Target Deploy Tag is ${TARGET_TAG}"
 echo "API MODE is ${API_CONTAINER}!!! "
 
 echo "start pull from ghcr !!!"
-docker pull ghcr.io/rockvr/mvh_api:"${TARGET_TAG}" || echo 'need login ghcr reg!'
+docker pull ghcr.io/WildBox-Lab/wb-api:"${TARGET_TAG}" || echo 'need login ghcr reg!'
 
 RUN_CONTAINER=`docker ps -a -q --filter name=API | xargs echo`
 if [ -n "${RUN_CONTAINER}" ]
@@ -28,7 +28,7 @@ docker run -d\
   --add-host=host.docker.internal:host-gateway\
   --name "${API_CONTAINER}"\
   --restart unless-stopped\
-  ghcr.io/rockvr/mvh_api:"${TARGET_TAG}" |
+  ghcr.io/WildBox-Lab/wb-api:"${TARGET_TAG}" |
   xargs -I % echo "${API_CONTAINER} ID is" % 
 
 sudo cp ./api_a.conf /etc/nginx/conf.d/api.conf

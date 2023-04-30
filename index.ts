@@ -3,9 +3,8 @@ import _debug from 'debug'
 import app from './app'
 import http from 'http'
 import { connect } from './db'
-import { initSyncCountMap } from './routes/scene'
 
-const debug = _debug('mvh-api:server')
+const debug = _debug('mb-api:server')
 
 /**
  * Get port from environment and store in Express.
@@ -27,7 +26,7 @@ const server = http.createServer(app)
 
 const init = async () => {
   await connect
-  initSyncCountMap()
+
   server.listen(port)
   server.on('error', onError)
   server.on('listening', onListening)

@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 
 // Database Name
-const dbName = 'mvh'
+const dbName = 'wb'
 
 // Connection URL
 const url = `mongodb://${process.env.MONGO_URI ?? '127.0.0.1:27017'}/${dbName}`

@@ -7,7 +7,7 @@ fi
 echo "Target Deploy Tag is ${TARGET_TAG}"
 
 echo "start pull from ghcr !!!"
-docker pull ghcr.io/rockvr/mvh_api:"${TARGET_TAG}" || echo 'need login ghcr reg!'
+docker pull ghcr.io/WildBox-Lab/wb-api:"${TARGET_TAG}" || echo 'need login ghcr reg!'
 
 NEXT_TICK='API_A'
 CURRENT_TICK='API_B'
@@ -31,7 +31,7 @@ docker run -d\
   --add-host=host.docker.internal:host-gateway\
   --name "${NEXT_TICK}"\
   --restart unless-stopped\
-  ghcr.io/rockvr/mvh_api:"${TARGET_TAG}" |
+  ghcr.io/WildBox-Lab/wb-api:"${TARGET_TAG}" |
   xargs -I % echo "${NEXT_TICK} ID is" % 
 
 # use next conf
