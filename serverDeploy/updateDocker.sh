@@ -11,7 +11,7 @@ docker pull ghcr.io/WildBox-Lab/wb-api:"${TARGET_TAG}" || echo 'need login ghcr 
 
 NEXT_TICK='API_A'
 CURRENT_TICK='API_B'
-PORT="3001"
+PORT="3009"
 CONF_FILE="./api_a.conf"
 
 HAS_API_A=`docker container ls -a -q --filter name=API_A`

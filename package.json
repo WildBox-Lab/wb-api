@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "PORT=3001 ts-node ./index.ts",
+    "dev": "PORT=3009 ts-node ./index.ts",
     "start": "node ./dist/index.js",
     "build": "npx tsc",
     "initDb": "ts-node ./dataInitUtil/insert.ts"

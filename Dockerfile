@@ -45,9 +45,9 @@ COPY --from=builder /app/node_modules ./node_modules
 
 USER api
 
-EXPOSE 3001
+EXPOSE 3009
 
-ENV PORT 3001
+ENV PORT 3009
 ENV MONGO_URI "host.docker.internal"
 
 CMD ["node", "dist/index.js"]

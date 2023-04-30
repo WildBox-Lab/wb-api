@@ -24,7 +24,7 @@ then
 fi
 
 docker run -d\
-  -p 3001:3001\
+  -p 3009:3009\
   --add-host=host.docker.internal:host-gateway\
   --name "${API_CONTAINER}"\
   --restart unless-stopped\
