@@ -7,7 +7,7 @@
     "esModuleInterop": true,
     "inlineSourceMap": true
   },
-  "include": ["./index.ts", "./app.ts", "./routes", "./db", "./type"],
+  "include": ["./index.ts", "./app.ts", "./routes", "./db", "./type", "./util"],
   "exclude": ["node_modules"],
   "types": [],
   "ts-node": {

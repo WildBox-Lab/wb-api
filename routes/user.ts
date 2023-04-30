@@ -1,7 +1,10 @@
 import express from 'express'
+import { v4 as uuidv4 } from 'uuid'
 import _ from 'lodash'
 import userMethod from '../db/user'
 import type { CustomRequest } from '../type/req'
+import { baseSignType, genderType, roleType } from '../type/user'
+import { getPasswordMd5hash } from '../util/crypto'
 const router = express.Router()
 
 router.use(async (req, res, next) => {
@@ -20,23 +23,26 @@ export type userLoginT = {
   password: string
 }
 
-const baseSelfInfoPick = [
+const otherUserInfoPick = [
   'uuid',
-  'email',
   'username',
   'gender',
   'cover',
-  'phoneNumber',
   'links',
+  'bio',
   'birthday',
+]
+
+const baseSelfInfoPick = [
+  ...otherUserInfoPick,
+  'email',
+  'phoneNumber',
   'role',
   'blockList',
 ]
 
-const otherUserInfoPick = ['uuid', 'username', 'gender', 'cover', 'links']
-
 router.post('/login', async (req: CustomRequest<userLoginT>, res) => {
-  const hashedPassword = `wildbox-${req.body.password}`
+  const hashedPassword = getPasswordMd5hash(req.body.password)
   const result = await userMethod.findOne({
     password: hashedPassword,
     email: req.body.email,
@@ -52,7 +58,50 @@ router.post('/login', async (req: CustomRequest<userLoginT>, res) => {
   res.send(_.pick(result, ...baseSelfInfoPick))
 })
 
-router.get('/:uuid', async (req, res) => {
+router.post('/signup', async (req: CustomRequest<baseSignType>, res) => {
+  const result = await userMethod.findOne({
+    email: req.body.email,
+  })
+
+  if (result) {
+    res.status(500)
+    res.send({ error: 1, message: 'email exist!' })
+    return
+  }
+  const uuid = uuidv4()
+  const user = {
+    uuid,
+    username: req.body.username,
+    email: req.body.email,
+    password: getPasswordMd5hash(req.body.password),
+    bio: '',
+    gender: genderType.hide,
+    avatar: '',
+    cover: '',
+    phoneNumber: '',
+    birthday: new Date(),
+    role: roleType.unauth,
+    blockList: [],
+  }
+  await userMethod.insertOne(user)
+  res.send(_.pick(result, ...baseSelfInfoPick))
+})
+
+router.get('/auth-email/:authId', async (req, res) => {
+  const result = await userMethod.findOne({
+    tempAuthKey: req.params.authId,
+  })
+  if (!result) {
+    res.send('激活失败')
+    return
+  }
+  result.role = roleType.normal
+  result.tempAuthKey = ''
+  await userMethod.updateOne(result.uuid, result)
+  res.send('激活成功')
+})
+
+router.get('/info/:uuid', async (req, res) => {
   if (!req.session?.userinfo) {
     res.status(401)
     res.end()
@@ -69,4 +118,7 @@ router.get('/:uuid', async (req, res) => {
     return
   }
   res.send(_.pick(result, ...(isSelf ? baseSelfInfoPick : otherUserInfoPick)))
+})
+router.post('/login', async (req: CustomRequest<baseSignType>, res) => {
+  const hashedPassword = `wildbox-${req.body.password}`
 })

@@ -1,4 +1,4 @@
-enum genderType {
+export enum genderType {
   male = 1,
   female = 2,
   other = 3,
@@ -35,4 +35,11 @@ export type baseUserDbType = {
   birthday: Date
   role: roleType
   blockList: string[]
+  tempAuthKey?: string
+}
+
+export type baseSignType = {
+  username: string
+  email: string
+  password: string
 }
