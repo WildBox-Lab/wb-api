@@ -32,4 +32,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/WildBox-Lab/wb-api:${{ github.sha }}, ghcr.io/WildBox-Lab/wb-api:latest
+          tags: ghcr.io/wildbox-lab/wb-api:${{ github.sha }}, ghcr.io/wildbox-lab/wb-api:latest
