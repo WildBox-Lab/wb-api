@@ -6,6 +6,7 @@ import logger from 'morgan'
 import session from 'express-session'
 import _MemoryStore from 'memorystore'
 import bodyParser from 'body-parser'
+import indexRouter from './routes/index'
 
 const MemoryStore = _MemoryStore(session)
 
@@ -37,9 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(session(sess))
 
-app.use('/', (res) => {
-  res.send('OK')
-})
+app.use('/', indexRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

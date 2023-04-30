@@ -2,8 +2,8 @@ import { Request } from 'express'
 
 declare module 'express-session' {
   interface SessionData {
-    adminInfo: {
-      user: string
+    userinfo: {
+      uuid: string
     }
   }
 }

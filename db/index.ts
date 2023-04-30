@@ -20,7 +20,7 @@ export const getCollectionGen =
   }
 
 interface baseDataWithIdT extends Document {
-  id: number | string
+  uuid: number | string
 }
 
 export const genMethod = <T extends baseDataWithIdT = baseDataWithIdT>(
@@ -30,7 +30,7 @@ export const genMethod = <T extends baseDataWithIdT = baseDataWithIdT>(
 
   const findOne = async (param: number | Partial<T>) => {
     const collection = await getCollection()
-    const query = typeof param === 'number' ? { id: param } : param
+    const query = typeof param === 'number' ? { uuid: param } : param
     const res = await collection.findOne(query as Filter<T>)
     if (!res) {
       return res
@@ -64,9 +64,9 @@ export const genMethod = <T extends baseDataWithIdT = baseDataWithIdT>(
     return res
   }
 
-  const deleteOne = async (id: number) => {
+  const deleteOne = async (uuid: number) => {
     const collection = await getCollection()
-    const res = await collection.deleteOne({ id } as Filter<T>)
+    const res = await collection.deleteOne({ uuid } as Filter<T>)
     return res
   }
 
@@ -76,10 +76,10 @@ export const genMethod = <T extends baseDataWithIdT = baseDataWithIdT>(
     return res
   }
 
-  const updateOne = async (id: number, sceneInfo: Partial<T>) => {
+  const updateOne = async (uuid: string, sceneInfo: Partial<T>) => {
     const collection = await getCollection()
     const res = await collection.updateOne(
-      { id } as Filter<T>,
+      { uuid } as Filter<T>,
       { $set: sceneInfo } as UpdateFilter<T>
     )
     return res
