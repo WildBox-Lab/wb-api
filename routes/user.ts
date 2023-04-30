@@ -3,7 +3,12 @@ import { v4 as uuidv4 } from 'uuid'
 import _ from 'lodash'
 import userMethod from '../db/user'
 import type { CustomRequest } from '../type/req'
-import { baseSignType, genderType, roleType } from '../type/user'
+import {
+  baseUserDbType,
+  baseSignType,
+  genderType,
+  roleType,
+} from '../type/user'
 import { getPasswordMd5hash } from '../util/crypto'
 const router = express.Router()
 
@@ -119,6 +124,28 @@ router.get('/info', async (req, res) => {
   }
   res.send(_.pick(result, ...baseSelfInfoPick))
 })
+
+router.put(
+  '/info',
+  async (req: CustomRequest<Partial<baseUserDbType>>, res) => {
+    console.log(req.headers.cookie)
+    if (!req.session?.userinfo) {
+      res.status(401)
+      res.end()
+      return
+    }
+    const uuid = req.session.userinfo.uuid
+    const result = await userMethod.findOne({ uuid })
+    if (!result) {
+      res.status(404)
+      res.end()
+      return
+    }
+    userMethod.updateOne(uuid, req.body)
+    const updatedResult = await userMethod.findOne({ uuid })
+    res.send(_.pick(updatedResult, ...baseSelfInfoPick))
+  }
+)
 
 router.get('/info/:uuid', async (req, res) => {
   if (!req.session?.userinfo) {
