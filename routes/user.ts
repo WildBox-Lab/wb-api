@@ -10,6 +10,7 @@ import {
   roleType,
 } from '../type/user'
 import { getPasswordMd5hash } from '../util/crypto'
+import { codeMap } from '../util/captcha'
 const router = express.Router()
 
 router.use(async (req, res, next) => {
@@ -20,7 +21,7 @@ router.use(async (req, res, next) => {
 })
 
 router.get('/', async (req, res) => {
-  res.send({ list: [] })
+  res.send({})
 })
 
 export type userLoginT = {
@@ -38,7 +39,13 @@ const otherUserInfoKey = [
   'birthday',
 ]
 
-const baseSelfInfoKey = [...otherUserInfoKey, 'email', 'phoneNumber', 'role']
+const baseSelfInfoKey = [
+  ...otherUserInfoKey,
+  'email',
+  'phoneNumber',
+  'role',
+  'blockList',
+]
 
 const canbeUpdateKey = [
   'username',
@@ -67,35 +74,51 @@ router.post('/login', async (req: CustomRequest<userLoginT>, res) => {
   res.send(_.pick(result, baseSelfInfoKey))
 })
 
-router.post('/signup', async (req: CustomRequest<baseSignType>, res) => {
-  const result = await userMethod.findOne({
-    email: req.body.email,
-  })
+router.post(
+  '/signup',
+  async (req: CustomRequest<baseSignType & { captchaCode: string }>, res) => {
+    // const captchaToken = req.session.captchaToken || ''
+    // captcha logic
+    // if (
+    //   !codeMap[captchaToken] ||
+    //   codeMap[captchaToken].text !== req.body.captchaCode
+    // ) {
+    //   res.status(401)
+    //   res.send({ error: 1, message: 'captcha code fail!' })
+    //   return
+    // } else {
+    //   delete codeMap[captchaToken]
+    // }
 
-  if (result) {
-    res.status(500)
-    res.send({ error: 1, message: 'email exist!' })
-    return
+    const result = await userMethod.findOne({
+      email: req.body.email,
+    })
+
+    if (result) {
+      res.status(500)
+      res.send({ error: 1, message: 'email exist!' })
+      return
+    }
+    const uuid = uuidv4()
+    const user = {
+      uuid,
+      username: req.body.username,
+      email: req.body.email,
+      password: getPasswordMd5hash(req.body.password),
+      bio: '',
+      gender: genderType.hide,
+      avatar: '',
+      cover: '',
+      phoneNumber: '',
+      birthday: new Date(),
+      role: roleType.unauth,
+      blockList: [],
+      tempAuthKey: uuidv4(),
+    }
+    await userMethod.insertOne(user)
+    res.send(_.pick(user, baseSelfInfoKey))
   }
-  const uuid = uuidv4()
-  const user = {
-    uuid,
-    username: req.body.username,
-    email: req.body.email,
-    password: getPasswordMd5hash(req.body.password),
-    bio: '',
-    gender: genderType.hide,
-    avatar: '',
-    cover: '',
-    phoneNumber: '',
-    birthday: new Date(),
-    role: roleType.unauth,
-    blockList: [],
-    tempAuthKey: uuidv4(),
-  }
-  await userMethod.insertOne(user)
-  res.send(_.pick(user, baseSelfInfoKey))
-})
+)
 
 router.get('/auth-email/:authId', async (req, res) => {
   const result = await userMethod.findOne({
@@ -126,7 +149,7 @@ router.get('/info', async (req, res) => {
     res.end()
     return
   }
-  res.send(_.pick(result, ...baseSelfInfoKey))
+  res.send(_.pick(result, baseSelfInfoKey))
 })
 
 router.put(

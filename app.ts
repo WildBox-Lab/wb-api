@@ -8,6 +8,7 @@ import _MemoryStore from 'memorystore'
 import bodyParser from 'body-parser'
 import indexRouter from './routes/index'
 import userRouter from './routes/user'
+import captchaRouter from './routes/captcha'
 
 const MemoryStore = _MemoryStore(session)
 
@@ -41,6 +42,7 @@ app.use(session(sess))
 
 app.use('/', indexRouter)
 app.use('/api/user', userRouter)
+app.use('/api/captcha', captchaRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

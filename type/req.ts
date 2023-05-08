@@ -5,6 +5,7 @@ declare module 'express-session' {
     userinfo: {
       uuid: string
     }
+    captchaToken: string
   }
 }
 
